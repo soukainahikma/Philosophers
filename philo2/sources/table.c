@@ -10,8 +10,9 @@ void	eat(t_philo *philo)
 	philo->start_eating = tp;
 	pthread_mutex_lock(&g_print);
 	philo->duration = get_duration(philo->init);
-	philo->nb_philo_must_eat--;
-	printf("%ld Philosopher %d is eating %d\n", philo->duration , philo->i + 1,philo->nb_philo_must_eat);
+	if(philo->nb_philo_must_eat != -2)
+		philo->nb_philo_must_eat--;
+	printf("%ld %d is eating\n", philo->duration , philo->i + 1);
 	pthread_mutex_unlock(&g_print);
 	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->lock[(philo->i + 1) % philo->number_of_philo]);
@@ -30,7 +31,7 @@ void	sleep_(t_philo *p)
 {
 	pthread_mutex_lock(&g_print);
 	p->duration = get_duration(p->init);
-	printf("%ld Philosopher %d is sleeping\n",p->duration, p->i + 1);
+	printf("%ld %d is sleeping\n",p->duration, p->i + 1);
 	pthread_mutex_unlock(&g_print);
 	usleep(p->time_to_sleep * 1000);
 }
@@ -45,8 +46,8 @@ void *death_check(void *philo)
 		{
 			pthread_mutex_lock(&g_print);
 			pthread_mutex_unlock(&test_g);
-			if(p->nb_philo_must_eat > 0)
-				printf("%ld Philosopher %d died\n",get_duration(p->start_eating), p->i + 1);
+			if(p->nb_philo_must_eat > 0 || p->nb_philo_must_eat == -2)
+				printf("%ld %d died\n",get_duration(p->start_eating), p->i + 1);
 			break;
 		}
 		usleep(1000);
@@ -68,7 +69,7 @@ void	*philosopher(void *philo)
 	pthread_detach(death_checker);
 	while (1)
 	{
-		if(test->nb_philo_must_eat > 0)
+		if(test->nb_philo_must_eat > 0 || test->nb_philo_must_eat == -2)
 		{
 			eat(test);
 			sleep_(test);
