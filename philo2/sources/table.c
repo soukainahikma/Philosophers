@@ -104,7 +104,6 @@ t_philo *get_struc(t_philo *philo)
 void	table(t_philo *phill)
 {
 	phill->i = 0;
-	// n_g = phill->
 	pthread_mutex_init(&test_g, NULL);
 	pthread_mutex_init(&g_print, NULL);
 	while (phill->i < phill->number_of_philo)

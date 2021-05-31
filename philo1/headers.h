@@ -24,9 +24,9 @@ typedef struct s_philo
 	pthread_mutex_t	myfork;
 	pthread_mutex_t	died;
 	pthread_mutex_t	life;
-
 	struct timeval	start_eating;
 	struct timeval	init;
+	int is_dead;
 	long			duration;
 
 }				t_philo;

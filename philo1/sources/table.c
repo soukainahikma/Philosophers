@@ -12,7 +12,7 @@ void	eat(t_philo *philo)
 	philo->duration = get_duration(philo->init);
 	if(philo->nb_philo_must_eat != -2)
 		philo->nb_philo_must_eat--;
-	printf("%ld %d is eating\n", philo->duration , philo->i + 1);
+	printf("%ld %d is eating %d\n", philo->duration , philo->i + 1,philo->nb_philo_must_eat);
 	pthread_mutex_unlock(&g_print);
 	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->lock[(philo->i + 1) % philo->number_of_philo]);
@@ -42,15 +42,22 @@ void *death_check(void *philo)
 
 	while(1)
 	{
+		usleep(100);
 		if(get_duration(p->start_eating) > p->time_to_die)
 		{
+		pthread_mutex_lock(&test_g);
 			pthread_mutex_lock(&g_print);
 			if(p->nb_philo_must_eat > 0 || p->nb_philo_must_eat == -2)
 				printf("%ld %d died\n",get_duration(p->start_eating), p->i + 1);
+			else
+				printf("done\n");
+			pthread_mutex_unlock(&g_print);
+			// p->is_dead = 1;
+			
 			pthread_mutex_unlock(&test_g);
+			// pthread_mutex_unlock(&test_g);
 			break ;
 		}
-		usleep(1000);
 	}
 	return (NULL);
 }
@@ -67,8 +74,7 @@ void	*philosopher(void *philo)
 	test->start_eating = tp;
 	pthread_create(&death_checker, NULL,death_check, test);
 	usleep(100);
-	// pthread_detach(death_checker);
-	while (1)
+	while (!test->is_dead)
 	{
 		if(test->nb_philo_must_eat > 0 || test->nb_philo_must_eat == -2)
 		{
@@ -76,6 +82,8 @@ void	*philosopher(void *philo)
 			sleep_(test);
 			think(test);
 		}
+		else
+			break;
 	}
 	pthread_join(death_checker,NULL);
 	return (NULL);
@@ -100,13 +108,13 @@ t_philo *get_struc(t_philo *philo)
 	p->init = philo->init;
 	p->duration = philo->duration;
 	p->life = philo->life;
+	p->is_dead = 0;
 	return (p);
 }
 
 void	table(t_philo *phill)
 {
 	phill->i = 0;
-	// n_g = phill->
 	pthread_mutex_init(&test_g, NULL);
 	pthread_mutex_init(&g_print, NULL);
 	while (phill->i < phill->number_of_philo)
@@ -115,17 +123,15 @@ void	table(t_philo *phill)
 		phill->i++;
 	}
 	phill->i = 0;
-	pthread_mutex_lock(&test_g);
 	while (phill->i < phill->number_of_philo)
 	{
 		phill->a = phill->i;
 		pthread_create(&phill->tid[phill->i], NULL, philosopher, (void *)get_struc(phill));
 		usleep(100);
-		// pthread_detach(phill->tid[phill->i]);
 		phill->i++;
 	}
 	phill->i = 0;
-	while (phill->i < phill->number_of_philo)
+	while(phill->i < phill->number_of_philo)
 	{
 		pthread_join(phill->tid[phill->i],NULL);
 		phill->i++;
@@ -133,9 +139,8 @@ void	table(t_philo *phill)
 	phill->i = 0;
 	while(phill->i < phill->number_of_philo)
 	{
-		pthread_mutex_destroy(&phill->lock[phill->i]);	
+		pthread_mutex_destroy(&phill->lock[phill->i]);
+
 		phill->i++;
 	}
-	pthread_mutex_lock(&test_g);
-	// pthread_mutex_unlock(&test_g);
 }
