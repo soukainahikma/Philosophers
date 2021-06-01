@@ -1,20 +1,21 @@
 #include "../headers.h"
+
 void	get_food(t_philo *philo)
 {
 	struct timeval tp;
-	pthread_mutex_lock(&philo->life);
 	pthread_mutex_lock(&philo->lock[philo->i]);
 	lock_msg(philo, FORK, 0);
 	pthread_mutex_lock(&philo->lock[(philo->i + 1) % philo->number_of_philo]);
 	lock_msg(philo, FORK, 0);
 	gettimeofday(&tp, NULL);
 	philo->start_eating = tp;
+	pthread_mutex_lock(&philo->life);
 	lock_msg(philo, EAT, philo->time_to_eat);
-	// if(alive == 1)
-		// usleep(philo->time_to_eat * 1000);
+	if(philo->nb_philo_must_eat >= 0)
+		philo->nb_philo_must_eat--;
+	pthread_mutex_unlock(&philo->life);
 	pthread_mutex_unlock(&philo->lock[(philo->i + 1) % philo->number_of_philo]);
 	pthread_mutex_unlock(&philo->lock[philo->i]);
-	pthread_mutex_unlock(&philo->life);
 }
 
 void	think(t_philo *p)
@@ -25,8 +26,6 @@ void	think(t_philo *p)
 void	sleep_(t_philo *p)
 {
 		lock_msg(p, SLEEP, p->time_to_sleep);
-		// if(alive == 1)
-			// usleep(p->time_to_sleep * 1000);
 }
 
 void *death_check(void *philo)
@@ -56,15 +55,12 @@ void	*philosopher(void *p)
 	philo->start_eating = tp;
 	pthread_mutex_init(&philo->life,NULL);
 	pthread_create(&death_checker, NULL,death_check, philo);
-	while (alive == 1)
-	{	
-		if (alive == 0)
-			break ;
+	while (alive == 1 && (philo->nb_philo_must_eat > 0 || philo->nb_philo_must_eat == -2))
+	{
 		get_food(philo);
 		sleep_(philo);
 		think(philo);
 	}
-	alive = 0;
 	pthread_join(death_checker,NULL);
 	pthread_mutex_destroy(&philo->life);
 	return (NULL);

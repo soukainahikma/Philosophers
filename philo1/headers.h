@@ -5,6 +5,7 @@
 #define SLEEP 3
 #define THINK 4
 #define DEAD 5
+#define DONE 6
 
 #include<stdio.h>
 #include<string.h>
