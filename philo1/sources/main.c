@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	}
 	philo.tid = malloc((sizeof(pthread_t) * philo.number_of_philo));
 	philo.lock = malloc((sizeof(pthread_mutex_t ) * philo.number_of_philo));
-	// printer(&philo);
+	printer(&philo);
 	table(&philo);
 	return (0);
 }

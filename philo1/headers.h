@@ -22,18 +22,19 @@ typedef struct s_philo
 	pthread_t		*tid;
 	pthread_mutex_t	*lock;
 	pthread_mutex_t	myfork;
-	pthread_mutex_t	died;
-	pthread_mutex_t	life;
+	// pthread_mutex_t	died;
+
 	struct timeval	start_eating;
 	struct timeval	init;
-	int is_dead;
 	long			duration;
-
+	// int				alive;
+	pthread_mutex_t	life;
 }				t_philo;
-int n_g;
+
+int				alive;
+
 pthread_mutex_t	test_g;
 pthread_mutex_t	g_print;
-
 int		ft_atoi(const char *str);
 void	printer(t_philo *philo);
 void	table(t_philo *philo);
