@@ -1,5 +1,10 @@
 #ifndef HEADERS_H
 #define HEADERS_H
+#define FORK 1
+#define EAT 2
+#define SLEEP 3
+#define THINK 4
+#define DEAD 5
 
 #include<stdio.h>
 #include<string.h>
@@ -21,13 +26,10 @@ typedef struct s_philo
 	int				a;
 	pthread_t		*tid;
 	pthread_mutex_t	*lock;
-	pthread_mutex_t	myfork;
-	// pthread_mutex_t	died;
 
 	struct timeval	start_eating;
 	struct timeval	init;
 	long			duration;
-	// int				alive;
 	pthread_mutex_t	life;
 }				t_philo;
 
@@ -35,13 +37,17 @@ int				alive;
 
 pthread_mutex_t	test_g;
 pthread_mutex_t	g_print;
-int		ft_atoi(const char *str);
-void	printer(t_philo *philo);
-void	table(t_philo *philo);
-long get_duration(struct timeval start_tp);
-long	get_time_milisecond(long sec, long usec);
-void	lock_forks1(t_philo *philo,int i);
-void	lock_forks2(t_philo *philo,int i);
-
+int				ft_atoi(const char *str);
+void			printer(t_philo *philo);
+void			table(t_philo *philo);
+long			get_duration(struct timeval start_tp);
+long			get_time_milisecond(long sec, long usec);
+void			*philosopher(void *philo);
+t_philo			*get_struc(t_philo *philo);
+void			init_mutex(t_philo *p);
+void			ft_creat_threads(t_philo *p);
+void			ft_join_theads(t_philo *p);
+void			ft_clear(t_philo *p);
+void lock_msg(t_philo *p, int id, int wait);
 
 #endif

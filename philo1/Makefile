@@ -6,6 +6,7 @@ SRC =	sources/ft_atoi.c\
 		sources/table.c\
 		sources/timer.c\
 		sources/forks.c\
+		sources/room_handler.c\
 
 OBJECT = $(SRC:.c=.o)
 
