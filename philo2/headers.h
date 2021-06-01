@@ -26,18 +26,18 @@ typedef struct s_philo
 	int				i;
 	int				a;
 	pthread_t		*tid;
-	pthread_mutex_t	*lock;
+	sem_t	*sem;
 
 	struct timeval	start_eating;
 	struct timeval	init;
 	long			duration;
-	pthread_mutex_t	life;
+	sem_t	*life;
 }				t_philo;
 
 int				alive;
 
-pthread_mutex_t	test_g;
-pthread_mutex_t	g_print;
+// pthread_mutex_t	test_g;
+sem_t	*g_print;
 int				ft_atoi(const char *str);
 void			printer(t_philo *philo);
 void			table(t_philo *philo);
@@ -45,7 +45,7 @@ long			get_duration(struct timeval start_tp);
 long			get_time_milisecond(long sec, long usec);
 void			*philosopher(void *philo);
 t_philo			*get_struc(t_philo *philo);
-void			init_semaphore(t_philo *p);
+void			init_semaphore(t_philo *p,char *str);
 void			ft_creat_threads(t_philo *p);
 void			ft_join_theads(t_philo *p);
 void			ft_clear(t_philo *p);

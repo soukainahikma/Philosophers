@@ -1,15 +1,13 @@
 #include "../headers.h"
 
-void	init_semaphore(t_philo *p)
+void	init_semaphore(t_philo *p,char *str)
 {
 	alive = 1;
 	p->i = 0;
-	pthread_mutex_init(&g_print, NULL);
-	while (p->i < p->number_of_philo)
-	{
-		pthread_mutex_init(&p->lock[p->i], NULL);
-		p->i++;
-	}
+	sem_unlink("/print");
+	g_print = sem_open("/print", O_CREAT, 0600, 1);
+	sem_unlink(str);
+	p->sem = sem_open(str, O_CREAT, 0600, p->number_of_philo);
 }
 
 void	ft_creat_threads(t_philo *p)
@@ -34,11 +32,11 @@ void	ft_join_theads(t_philo *p)
 }
 void	ft_clear(t_philo *p)
 {
-	p->i = 0;
+/* 	p->i = 0;
 	pthread_mutex_destroy(&g_print);
 	while(p->i < p->number_of_philo)
 	{
 		pthread_mutex_destroy(&p->lock[p->i]);
 		p->i++;
-	}
+	} */
 }
