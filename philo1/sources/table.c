@@ -24,7 +24,7 @@ void	*death_check(void *philo)
 	t_philo	*p;
 
 	p = (t_philo *)philo;
-	while (alive == 1)
+	while (p->var->alive == 1)
 	{
 		usleep(100);
 		pthread_mutex_lock(&p->life);
@@ -46,23 +46,24 @@ void	*philosopher(void *p)
 	philo->start_eating = tp;
 	pthread_mutex_init(&philo->life, NULL);
 	pthread_create(&death_checker, NULL, death_check, philo);
-	while (alive == 1 && (philo->nb_philo_must_eat > 0
+	while (philo->var->alive == 1 && (philo->nb_philo_must_eat > 0
 			|| philo->nb_philo_must_eat == -2))
 	{
 		get_food(philo);
-		lock_msg(philo, THINK, 0);
 		lock_msg(philo, SLEEP, philo->time_to_sleep);
+		lock_msg(philo, THINK, 0);
 	}
 	pthread_join(death_checker, NULL);
 	pthread_mutex_destroy(&philo->life);
 	return (NULL);
 }
 
-t_philo	*get_struc(t_philo *philo)
+t_philo	*get_struc(t_philo *philo, t_global_var *var)
 {
 	t_philo	*p;
 
 	p = (t_philo *)malloc(sizeof(t_philo));
+	p->var = var;
 	p->number_of_philo = philo->number_of_philo;
 	p->time_to_die = philo->time_to_die;
 	p->time_to_eat = philo->time_to_eat;
@@ -79,8 +80,11 @@ t_philo	*get_struc(t_philo *philo)
 
 void	table(t_philo *philosopher_)
 {
-	init_semaphore(philosopher_);
-	ft_creat_threads(philosopher_);
+	t_global_var *var;
+
+	var = (t_global_var*)malloc(sizeof(t_global_var));
+	init_mutex(philosopher_, var);
+	ft_creat_threads(philosopher_, var);
 	ft_join_theads(philosopher_);
-	ft_clear(philosopher_);
+	ft_clear(philosopher_, var);
 }

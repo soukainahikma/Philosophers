@@ -15,6 +15,12 @@
 # include<semaphore.h>
 # include<sys/time.h>
 
+typedef struct s_global_var
+{
+	int				alive;
+	pthread_mutex_t	g_print;
+}				t_global_var;
+
 typedef struct s_philo
 {
 	int				number_of_philo;
@@ -30,21 +36,20 @@ typedef struct s_philo
 	struct timeval	init;
 	long			duration;
 	pthread_mutex_t	life;
+	t_global_var	*var;
 }				t_philo;
-int				alive;
-pthread_mutex_t	test_g;
-pthread_mutex_t	g_print;
+
 int				ft_atoi(const char *str);
 void			printer(t_philo *philo);
 void			table(t_philo *philo);
 long			get_duration(struct timeval start_tp);
 long			get_time_milisecond(long sec, long usec);
 void			*philosopher(void *philo);
-t_philo			*get_struc(t_philo *philo);
-void			init_semaphore(t_philo *p);
-void			ft_creat_threads(t_philo *p);
+t_philo			*get_struc(t_philo *philo, t_global_var *var);
+void			init_mutex(t_philo *p, t_global_var *var);
+void			ft_creat_threads(t_philo *p, t_global_var *var);
 void			ft_join_theads(t_philo *p);
-void			ft_clear(t_philo *p);
+void			ft_clear(t_philo *p, t_global_var *var);
 void			lock_msg(t_philo *p, int id, int wait);
 
 #endif

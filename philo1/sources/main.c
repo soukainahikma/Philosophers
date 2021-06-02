@@ -41,6 +41,11 @@ int	main(int argc, char **argv)
 			j++;
 		}
 	}
+	else 
+	{
+		printf("wrong number of parametres !");
+		return(0);
+	}
 	philo.tid = malloc((sizeof(pthread_t) * philo.number_of_philo));
 	philo.lock = malloc((sizeof(pthread_mutex_t) * philo.number_of_philo));
 	table(&philo);
