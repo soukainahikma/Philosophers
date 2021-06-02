@@ -1,6 +1,6 @@
 #include "../headers.h"
 
-int	t_atoi(const char *str)
+int	ft_atoi(const char *str)
 {
 	unsigned long	number;
 	int				c;
