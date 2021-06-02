@@ -1,20 +1,19 @@
 #ifndef HEADERS_H
-#define HEADERS_H
-#define FORK 1
-#define EAT 2
-#define SLEEP 3
-#define THINK 4
-#define DEAD 5
-#define DONE 6
-
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<limits.h>
-#include<pthread.h>
-#include<semaphore.h>
-#include <sys/time.h>
+# define HEADERS_H
+# define FORK 1
+# define EAT 2
+# define SLEEP 3
+# define THINK 4
+# define DEAD 5
+# define DONE 6
+# include<stdio.h>
+# include<string.h>
+# include<stdlib.h>
+# include<unistd.h>
+# include<limits.h>
+# include<pthread.h>
+# include<semaphore.h>
+# include<sys/time.h>
 
 typedef struct s_philo
 {
@@ -27,15 +26,12 @@ typedef struct s_philo
 	int				a;
 	pthread_t		*tid;
 	pthread_mutex_t	*lock;
-
 	struct timeval	start_eating;
 	struct timeval	init;
 	long			duration;
 	pthread_mutex_t	life;
 }				t_philo;
-
 int				alive;
-
 pthread_mutex_t	test_g;
 pthread_mutex_t	g_print;
 int				ft_atoi(const char *str);
@@ -49,6 +45,6 @@ void			init_semaphore(t_philo *p);
 void			ft_creat_threads(t_philo *p);
 void			ft_join_theads(t_philo *p);
 void			ft_clear(t_philo *p);
-void lock_msg(t_philo *p, int id, int wait);
+void			lock_msg(t_philo *p, int id, int wait);
 
 #endif

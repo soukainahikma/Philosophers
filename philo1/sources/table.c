@@ -2,7 +2,8 @@
 
 void	get_food(t_philo *philo)
 {
-	struct timeval tp;
+	struct timeval	tp;
+
 	pthread_mutex_lock(&philo->lock[philo->i]);
 	lock_msg(philo, FORK, 0);
 	pthread_mutex_lock(&philo->lock[(philo->i + 1) % philo->number_of_philo]);
@@ -11,33 +12,23 @@ void	get_food(t_philo *philo)
 	philo->start_eating = tp;
 	pthread_mutex_lock(&philo->life);
 	lock_msg(philo, EAT, philo->time_to_eat);
-	if(philo->nb_philo_must_eat >= 0)
+	if (philo->nb_philo_must_eat >= 0)
 		philo->nb_philo_must_eat--;
 	pthread_mutex_unlock(&philo->life);
 	pthread_mutex_unlock(&philo->lock[(philo->i + 1) % philo->number_of_philo]);
 	pthread_mutex_unlock(&philo->lock[philo->i]);
 }
 
-void	think(t_philo *p)
+void	*death_check(void *philo)
 {
-	lock_msg(p, THINK, 0);
-}
+	t_philo	*p;
 
-void	sleep_(t_philo *p)
-{
-		lock_msg(p, SLEEP, p->time_to_sleep);
-}
-
-void *death_check(void *philo)
-{
-	t_philo *p;
 	p = (t_philo *)philo;
-
-	while(alive == 1)
+	while (alive == 1)
 	{
 		usleep(100);
 		pthread_mutex_lock(&p->life);
-		if(get_duration(p->start_eating) > p->time_to_die)
+		if (get_duration(p->start_eating) > p->time_to_die)
 			lock_msg(p, DEAD, 0);
 		pthread_mutex_unlock(&p->life);
 	}
@@ -46,29 +37,30 @@ void *death_check(void *philo)
 
 void	*philosopher(void *p)
 {
-	t_philo	*philo;
-	pthread_t death_checker;
-	struct timeval tp;
+	t_philo			*philo;
+	pthread_t		death_checker;
+	struct timeval	tp;
 
 	philo = (t_philo *) p;
-	gettimeofday(&tp , NULL);
+	gettimeofday(&tp, NULL);
 	philo->start_eating = tp;
-	pthread_mutex_init(&philo->life,NULL);
-	pthread_create(&death_checker, NULL,death_check, philo);
-	while (alive == 1 && (philo->nb_philo_must_eat > 0 || philo->nb_philo_must_eat == -2))
+	pthread_mutex_init(&philo->life, NULL);
+	pthread_create(&death_checker, NULL, death_check, philo);
+	while (alive == 1 && (philo->nb_philo_must_eat > 0
+			|| philo->nb_philo_must_eat == -2))
 	{
 		get_food(philo);
-		sleep_(philo);
-		think(philo);
+		lock_msg(philo, THINK, 0);
+		lock_msg(philo, SLEEP, philo->time_to_sleep);
 	}
-	pthread_join(death_checker,NULL);
+	pthread_join(death_checker, NULL);
 	pthread_mutex_destroy(&philo->life);
 	return (NULL);
 }
 
-t_philo *get_struc(t_philo *philo)
+t_philo	*get_struc(t_philo *philo)
 {
-	t_philo *p;
+	t_philo	*p;
 
 	p = (t_philo *)malloc(sizeof(t_philo));
 	p->number_of_philo = philo->number_of_philo;

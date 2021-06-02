@@ -26,7 +26,7 @@ void	*death_check(void *philo)
 	p = (t_philo *)philo;
 	while (alive == 1)
 	{
-		usleep(100);
+		usleep(300);
 		sem_wait(p->life);
 		if (get_duration(p->start_eating) > p->time_to_die)
 			lock_msg(p, DEAD, 0);
@@ -41,7 +41,7 @@ void	*philosopher(void *p)
 	pthread_t		death_checker;
 	struct timeval	tp;
 
-	philo = (t_philo *) p;
+	philo = (t_philo *)p;
 	gettimeofday(&tp, NULL);
 	philo->start_eating = tp;
 	sem_unlink("/life");
@@ -55,7 +55,7 @@ void	*philosopher(void *p)
 		lock_msg(philo, SLEEP, philo->time_to_sleep);
 	}
 	pthread_join(death_checker, NULL);
-	return (NULL);
+	exit(0);
 }
 
 t_philo	*get_struc(t_philo *philo)
@@ -82,7 +82,11 @@ void	table(t_philo *philosopher_)
 	char	*str;
 
 	str = "/wait_philo";
+	sem_unlink("/global");
+	global_sem = sem_open("/global", O_CREAT, 0600, 0);
 	init_semaphore(philosopher_, str);
 	ft_creat_threads(philosopher_);
-	ft_join_theads(philosopher_);
+	sem_wait(global_sem);
+	sem_post(global_sem);
+	ft_clear(philosopher_);
 }

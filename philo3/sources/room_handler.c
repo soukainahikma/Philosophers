@@ -12,13 +12,14 @@ void	init_semaphore(t_philo *p, char *str)
 
 void	ft_creat_threads(t_philo *p)
 {
-	p->i = 0;
-	while (p->i < p->number_of_philo)
+	p->pid = malloc(sizeof(pid_t) * p->number_of_philo);
+	p->i = -1;
+	while (++p->i < p->number_of_philo)
 	{
-		p->a = p->i;
-		pthread_create(&p->tid[p->i], NULL, philosopher, (void *)get_struc(p));
+		p->pid[p->i] = fork();
+		if (p->pid[p->i] == 0)
+			philosopher((void *)get_struc(p));
 		usleep(100);
-		p->i++;
 	}
 }
 
@@ -34,11 +35,10 @@ void	ft_join_theads(t_philo *p)
 
 void	ft_clear(t_philo *p)
 {
-/* 	p->i = 0;
-	pthread_mutex_destroy(&g_print);
-	while(p->i < p->number_of_philo)
+	p->i = 0;
+	while (p->i < p->number_of_philo)
 	{
-		pthread_mutex_destroy(&p->lock[p->i]);
+		kill(p->pid[p->i], SIGQUIT);
 		p->i++;
-	} */
+	}
 }

@@ -20,6 +20,8 @@ void	lock_msg(t_philo *p, int id, int wait)
 			else
 				printf("done\n");
 			alive = 0;
+			sem_post(global_sem);
+			exit(0);
 		}
 	}
 	sem_post(g_print);

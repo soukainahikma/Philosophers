@@ -6,6 +6,7 @@
 # define THINK 4
 # define DEAD 5
 # define DONE 6
+
 # include<stdio.h>
 # include<string.h>
 # include<stdlib.h>
@@ -14,6 +15,7 @@
 # include<pthread.h>
 # include<semaphore.h>
 # include<sys/time.h>
+# include<signal.h>
 
 typedef struct s_philo
 {
@@ -26,12 +28,14 @@ typedef struct s_philo
 	int				a;
 	pthread_t		*tid;
 	sem_t			*sem;
+	pid_t			*pid;
 	struct timeval	start_eating;
 	struct timeval	init;
 	long			duration;
 	sem_t			*life;
 }				t_philo;
 int				alive;
+sem_t			*global_sem;
 sem_t			*g_print;
 int				ft_atoi(const char *str);
 void			printer(t_philo *philo);
@@ -45,4 +49,5 @@ void			ft_creat_threads(t_philo *p);
 void			ft_join_theads(t_philo *p);
 void			ft_clear(t_philo *p);
 void			lock_msg(t_philo *p, int id, int wait);
+
 #endif
