@@ -26,10 +26,14 @@ void	*death_check(void *philo)
 	p = (t_philo *)philo;
 	while (p->var->alive == 1)
 	{
-		usleep(100);
+		usleep(300);
 		sem_wait(p->life);
 		if (get_duration(p->start_eating) > p->time_to_die)
+		{
+			if (p->number_of_philo == 1)
+				sem_post(p->sem);
 			lock_msg(p, DEAD, 0);
+		}
 		sem_post(p->life);
 	}
 	return (NULL);
@@ -47,6 +51,7 @@ void	*philosopher(void *p)
 	sem_unlink("/life");
 	philo->life = sem_open("/life", O_CREAT, 0600, 1);
 	pthread_create(&death_checker, NULL, death_check, philo);
+	usleep(100);
 	while (philo->var->alive == 1 && (philo->must_eat > 0
 			|| philo->must_eat == -2))
 	{

@@ -29,7 +29,11 @@ void	*death_check(void *philo)
 		usleep(100);
 		pthread_mutex_lock(&p->life);
 		if (get_duration(p->start_eating) > p->time_to_die)
+		{
+			if (p->number_of_philo == 1)
+				pthread_mutex_unlock(&p->lock[0]);
 			lock_msg(p, DEAD, 0);
+		}
 		pthread_mutex_unlock(&p->life);
 	}
 	return (NULL);

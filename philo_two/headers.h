@@ -19,6 +19,7 @@ typedef struct s_global_var
 {
 	int				alive;
 	sem_t			*g_print;
+	sem_t			*life;
 }				t_global_var;
 
 typedef struct s_philo

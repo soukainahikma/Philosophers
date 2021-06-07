@@ -1,4 +1,4 @@
-NAME = philosopher.a
+NAME = philo_one
 AR = ar rcs
 SRC =	sources/ft_atoi.c\
 		sources/printer.c\
@@ -14,12 +14,12 @@ OBJECT = $(SRC:.c=.o)
 HEADERS = ./headers.h
 
 
-all: $(NAME) $(OBJECT) $(HEADERS)
+all: $(NAME) $(OBJECT)
 
 $(NAME): $(OBJECT) $(HEADERS)
 	gcc -Wall -Wextra -Werror $(OBJECT) -o philo_one
 
-%.o: %.c
+%.o: %.c $(HEADERS)
 	gcc -Wall -Wextra -Werror  -I  $(HEADERS) -o $@ -c $< 
 
 clean:
@@ -27,6 +27,5 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME)
-	@rm ./philo_one
 
 re: fclean $(NAME)
